@@ -1,9 +1,13 @@
---1
+--Write a SELECT statement that returns one column from the Vendors table named Full Name. 
+--Create this column from the VendorContactFName and VendorContactLName columns. 
+--Format it as follows: last name, comma, first name (for example, “Doe, John”). 
+--Sort the result set by last name, then by first name.
+
 select VendorContactLName+','+VendorContactFName as 'Full Name'
 from vendors
 order by VendorContactLName, VendorContactFName
 ---------------------------
--- 2. (2 points) Raul
+
 -- Write a SELECT statement that returns three columns:
 -- InvoiceTotal, 10% of Invoice Total, Invoice Total plus 10%.
 -- (For example, if InvoiceTotal is 100.0000, 10% is 10.0000, and Plus 10% is 110.0000.) 
@@ -12,7 +16,10 @@ Select InvoiceTotal, (InvoiceTotal * .1) as 'InvoiceTotal10P', (InvoiceTotal * 1
 from Invoices
 order by InvoiceTotal desc
 ---------------------------
--- 3 -- Jazlyn
+--Write a SQL query using CASE to determine the location of the vendors. 
+--Vendors from California will be printed, if not from California print 'Out of State'.
+--Have your results display the Vendor ID, Vendor Name, Location (Alias for the CASE)
+
 SELECT VendorID, VendorName, 
 	CASE
     WHEN VendorState = 'CA' Then 'California'
@@ -21,15 +28,15 @@ END AS Location
 FROM Vendors
 ----------------------------------
 
---Question 4
+--Write a query that will display the invoiceNumber and termsDescripton.
+--join the tables on TermsID using a table alias. Sort the data first by the TermsDescription and then by InvoiceNumber, from lowest to highest
+
 Select InvoiceNumber, TermsDescription
 From Invoices AS I
 Inner Join Terms AS T
 ON I.TermsID = T.TermsID
 
 ---------------------------
-
---5. (1 point) George
 --Display vendor names who had an Invoice in 2016
 
 --1st Method
@@ -49,8 +56,7 @@ Order by  VendorName
 
 -----------------------------------------------------
 
---6. (1 point) George
---Redo Question 5 displaying the top 15 vendors
+--displaying the top 15 vendors
 --1st Method
 USE AP
 SELECT  Distinct Top 15 VendorName
@@ -67,14 +73,14 @@ where year(I.invoicedate)=2016
 Order by  VendorName
 
 ----------------------------
+--Write a SELECT statement that returns all columns from the Vendors table inner-joined with 
+--the Invoices table.
 
---7
 select * from vendors
 inner join invoices
 on vendors.vendorid=invoices.vendorid
 ---------------------------
 
--- 8. (1 points) Raul
 -- Write a SQL query to return results as shown in example below. 
 -- Do not return vendors without a phone number.
 -- Example result:
@@ -85,7 +91,8 @@ from Vendors
 where VendorPhone is not null
 --------------------------------
 
--- 9. -- Jazlyn
+--Write a query to return Vendor names that contain 'ata' or 'oto'. 
+--Sort in alphabetical order.
 USE AP
 
 SELECT VendorName
@@ -94,7 +101,7 @@ WHERE VendorName LIKE '%ata%' OR VendorName LIKE '%oto%'
 ORDER BY VendorName ASC;
 -----------------------------------
 
---Question 10
+--Write a query that will display the Invoice due date and 10 days added to the invoice due date
 
 --Method 1
  Select InvoiceDueDate, DATEADD(day, 10, InvoiceDueDate ) AS InvoiceDueDatePlus10d
@@ -107,7 +114,6 @@ ORDER BY VendorName ASC;
  Order by InvoiceDueDate
 ---------------------------------
 
---11. (2 points) George
 --Write a query that will return the total of all the payments
 
 USE AP
@@ -115,14 +121,11 @@ SELECT sum(PaymentTotal) as 'PaymentTotal'
 From Invoices
 ---------------------------
 
---12
+--Write a query that shows the number of invoices for each termID.
 select count(*) as 'the number of invoices for each termID', termsid as 'termsid'
 from invoices
 group by termsid
 ---------------------------
-
-
--- 13. (2 points) Raul
 -- Write a SELECT statement that returns two columns from the Invoices table: VendorID and 
 -- PaymentSum, where PaymentSum is the sum of the PaymentTotal column. 
 -- Group the result set by VendorID.
@@ -130,8 +133,10 @@ Select VendorID, sum(PaymentTotal) as 'PaymentSum'
 from Invoices
 Group by VendorID
 --------------------------------
+--Write a SELECT statement that returns two columns: VendorName and PaymentSum, where PaymentSum is the sum of the PaymentTotal column. 
+--Group the result set by VendorName. 
+--Return only 10 rows, corresponding to the 10 vendors who’ve been paid the most. 
 
--- 14. -- Jazlyn
 Select Top 10 VendorName, Sum(PaymentTotal) AS PaymentSum From
 Invoices AS I Join Vendors AS V
 ON I.VendorID = V.VendorID
@@ -140,7 +145,10 @@ Order by PaymentSum Desc
 
 ----------------------------------
 
- --Question 15
+--Write a SELECT statement that returns three columns: VendorName, InvoiceCount, and InvoiceSum. 
+--InvoiceCount is the count of the number of invoices, and InvoiceSum is the sum of the InvoiceTotal column. 
+--Group the result set by vendor. 
+--Sort the result set so the vendor with the highest number of invoices appears first
 
 Select VendorName, Count(InvoiceNumber) AS InvoiceCount, Sum(InvoiceTotal) AS InvoiceSum 
 From Invoices AS I Inner Join Vendors AS V
@@ -149,7 +157,6 @@ Group by VendorName
 Order by InvoiceCount Desc
 ---------------------------------
 
---16. (3 points)
 --Write a query that returns the invoice number, invoice date, and invoice total.
 --Return only those results that are greater than the average invoice total.
 --Sort your results by the invoice total
@@ -173,7 +180,6 @@ having
 		)
 ---------------------------------
 
---17. (3 points)
 --Write a SELECT statement that answers this question:
 --Which invoices have a PaymentTotal that’s greater than the average PaymentTotal for all paid invoices?
 --Return the InvoiceNumber and InvoiceTotal for each invoice.
@@ -189,7 +195,6 @@ HAVING PaymentTotal> @AvgpaymentTotal
 Order BY InvoiceNumber
 ---------------------------------
 
---18. (3 points) George
 --For each invoice that has PaymentDate (not null), calculate and display how many days
 --Before the due date the invoice was paid. More specifically, display invoiceID, invoice number,
 --Invoice date, invoice due date, payment date, and calculated column that is the number of days
@@ -201,14 +206,14 @@ From Invoices
 Where PaymentDate IS NOT Null
 Order by PaymenttoInvoiceDiff Desc
 ---------------------------------
-
---19
+--Using InvoiceLineItems, display invoice ids together with how many lines each invoice has. 
+--Include only invoices that have more than one line. Make sure all columns have meaningful headers.
 select invoiceid , count(invoiceid) as 'the amount of invoiceid'
 from invoicelineitems
 group by invoiceid
 having count(invoiceid)>1
 
--- 20. (2 points) Raul
+---------------------------------------
 -- Add InvoiceNumber and VendorName to the previous query (you will need to JOIN two more tables).
 
 Select i.InvoiceNumber, v.VendorName, il.InvoiceID, count(il.InvoiceID) as 'Lines for Invoice'
@@ -220,8 +225,8 @@ on i.VendorID = v.VendorID
 group by i.InvoiceNumber, v.VendorName, il.InvoiceID
 having count(il.InvoiceID)>1
 --------------------------------
-
--- 21. -- Jazlyn
+--Display account numbers and descriptions of all accounts FROM GLAccounts table 
+--that are NOT referenced by any invoice line item.
 
 SELECT gla.AccountNo, AccountDescription
 FROM GLAccounts gla
@@ -230,14 +235,19 @@ LEFT JOIN InvoiceLineItems ivi
 WHERE InvoiceID IS NULL
 -------------------------------
 
- --Question 22
+--For each vendor who has invoices display vendor ID, vendor name and the date of the most 
+--recent invoice of that vendor. Display all date values without time component. 
+--Make sure all columns have meaningful headers.
 
 --Format(InvoiceDate, 'yyy-mm-dd')
 Select V.VendorID, V.VendorName, Format(Max(InvoiceDate), 'yyy-mm-dd') AS InvoiceDateRecent From Vendors AS V
 Join Invoices AS I ON V.VendorID = I.VendorID
 Group by V.VendorID,V.VendorName
---------------------------------
---23
+---------------------------------------------------------
+
+--Create a function to receive an invoice ID and returns the given invoice has been paid off or not. If it has paid off, it should return ‘Paid off’. If not, show “Not paid off - InvoiceDueDate”.
+--Test the function by executing it. Copy the syntax that you use below.
+
 --Method 1
 CREATE FUNCTION fdinvoiceID1 (@invoiceid int)
 RETURNS varchar(30)
@@ -263,7 +273,7 @@ END;
 select dbo.fdinvoiceID(25) 
 
 ------------------------------------------------------------------
---24. (4 points)
+
 --Create a store procedure for inserting invoices. The procedure should receive three parameters (InvoiceNumber, InvoiceTotal and InvoiceDueDate) and insert them into the invoice tables. You can enter Null for Payment date and 0 for payment total and credit total. You need to check if the vendorID exists before inserting the query. If not, throws a meaningful error.
 --Please write the syntax for executing store proc below the syntax for store procedure.
 
@@ -292,7 +302,7 @@ exec spInsertInvoices @InvNo=990, @InvTotal=990, @InvDueDate='2021-09-23', @Vend
 exec spInsertInvoices @InvNo=990, @InvTotal=990, @InvDueDate='2021-09-23', @VendorID=110
 
 --------------------------------
---25. (3 Points) George
+
 --Write a script to create a new schema. Then, create a new table within that schema. (Choose any names you like.)
 
 CREATE SCHEMA Assignment3_25;
@@ -304,8 +314,8 @@ CREATE TABLE Assignment3_25.demo(
 );
 SELECT * FROM sys.schemas;
 
-
- --Question 26
+------------------------------------------
+--Write one/multiple queries to delete vendors who lives in NV and TN
 -------------------------
 Begin tran
 Delete Invoices Where VendorID in(
